@@ -3,12 +3,18 @@ import sys
 from src.exception import CustomException
 from src.logger import logging
 import pandas as pd
+import numpy as np
 
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 
 from src.components.data_transformation import DataTransformation
 from src.components.data_transformation import DataTransformationConfig
+
+from src.components.model_trainer import ModelTrainerConfig
+from src.components.model_trainer import ModelTrainer
+
+from imblearn.over_sampling import RandomOverSampler
 
 @dataclass
 class DataIngestionConfig:
@@ -31,7 +37,15 @@ class DataIngestion:
             df.to_csv(self.ingestion_config.raw_data_path,index=False,header=True)
 
             logging.info("Train test split initiated")
-            train_set,test_set=train_test_split(df,test_size=0.2,random_state=42)
+             
+            X=df.drop('disease',axis=1)
+            y=df['disease']
+            ros = RandomOverSampler(random_state=42)
+            X_samp, y_samp = ros.fit_resample(X, y)
+            df1 = pd.concat([X_samp,y_samp], axis=1)
+            
+
+            train_set,test_set=train_test_split(df1,test_size=0.2,random_state=42)
 
             train_set.to_csv(self.ingestion_config.train_data_path,index=False,header=True)
 
@@ -53,3 +67,6 @@ if __name__=="__main__":
 
     data_transformation=DataTransformation()
     train_arr,test_arr,_=data_transformation.initiate_data_transformation(train_data,test_data)
+
+    modeltrainer=ModelTrainer()
+    print(modeltrainer.initiate_model_trainer(train_arr,test_arr))

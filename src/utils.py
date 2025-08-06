@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import dill
 import pickle
-from sklearn.metrics import r2_score
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
 
 from src.exception import CustomException
@@ -22,34 +22,34 @@ def save_object(file_path, obj):
     except Exception as e:
         raise CustomException(e, sys)
     
-def evaluate_models(X_train, y_train,X_test,y_test,models,param):
+def evaluate_models(X_train, y_train, X_test, y_test, models, param):
     try:
-        report = {}
+        report, tuned_model = {}, {}
 
-        for i in range(len(list(models))):
-            model = list(models.values())[i]
-            para=param[list(models.keys())[i]]
+        for model_name, model in models.items():
+            para = param[model_name]
+            gs = GridSearchCV(model, para, cv=3, scoring='accuracy', n_jobs=-1, verbose=1)
+            gs.fit(X_train, y_train)
 
-            gs = GridSearchCV(model,para,cv=3)
-            gs.fit(X_train,y_train)
-
+            # Update with best params
             model.set_params(**gs.best_params_)
-            model.fit(X_train,y_train)
+            model.fit(X_train, y_train)
 
-            #model.fit(X_train, y_train)  # Train model
+            # Predictions
+            y_train_pred, y_test_pred = model.predict(X_train), model.predict(X_test)
 
-            y_train_pred = model.predict(X_train)
+            # Accuracy
+            train_score = accuracy_score(y_train, y_train_pred)
+            test_score = accuracy_score(y_test, y_test_pred)
 
-            y_test_pred = model.predict(X_test)
+            # Save results
+            report[model_name] = test_score
+            tuned_model[model_name] = model
 
-            train_model_score = r2_score(y_train, y_train_pred)
+            print(f"[{model_name}] Train: {train_score:.4f} | Test: {test_score:.4f}")
+            print(f"Best Params: {gs.best_params_}\n")
 
-            test_model_score = r2_score(y_test, y_test_pred)
-
-            report[list(models.keys())[i]] = test_model_score
-
-        return report
-
+        return report, tuned_model
     except Exception as e:
         raise CustomException(e, sys)
     
