@@ -1,0 +1,68 @@
+<html>
+<body>
+    <div class="login">
+       <h1>Disease predictor</h1>
+   
+       <form action="{{ url_for('predict_datapoint')}}" method="post">
+        <h1>
+            <legend>Disease Prediction</legend>
+        </h1>
+         <div class="mb-3">
+            <label class="form-label">fever</label>
+            <input class="form-control" type="number" name="fever"
+                placeholder="enter 0 or 1"  />
+        </div>
+         <div class="mb-3">
+            <label class="form-label">headache</label>
+            <input class="form-control" type="number" name="headache"
+                placeholder="enter 0 or 1" min='0' max='100' />
+        </div>
+         <div class="mb-3">
+            <label class="form-label">nausea</label>
+            <input class="form-control" type="number" name="nausea"
+                placeholder="enter 0 or 1" />
+        </div>
+         <div class="mb-3">
+            <label class="form-label">vomiting</label>
+            <input class="form-control" type="number" name="vomiting"
+                placeholder="enter 0 or 1" />
+        </div>
+         <div class="mb-3">
+            <label class="form-label">fatigue</label>
+            <input class="form-control" type="number" name="fatigue"
+                placeholder="enter 0 or 1"/>
+        </div>
+         <div class="mb-3">
+            <label class="form-label">joint_pain</label>
+            <input class="form-control" type="number" name="joint_pain"
+                placeholder="enter 0 or 1" />
+        </div>
+         <div class="mb-3">
+            <label class="form-label">skin_rash</label>
+            <input class="form-control" type="number" name="skin_rash"
+                placeholder="enter 0 or 1" />
+        </div>
+         <div class="mb-3">
+            <label class="form-label">cough</label>
+            <input class="form-control" type="number" name="cough"
+                placeholder="enter 0 or 1" />
+        </div>
+                 <div class="mb-3">
+            <label class="form-label">weight_loss</label>
+            <input class="form-control" type="number" name="weight_loss"
+                placeholder="enter 0 or 1" />
+        </div>
+                 <div class="mb-3">
+            <label class="form-label">yellow_eyes</label>
+            <input class="form-control" type="number" name="yellow_eyes"
+                placeholder="enter 0 or 1" />
+        </div>
+        <div class="mb-3">
+            <input class="btn btn-primary" type="submit" value="Predict is" required />
+        </div>
+    </form>
+    <h2>
+       THE  prediction is {{results}}
+    </h2>
+   <body>
+</html>
